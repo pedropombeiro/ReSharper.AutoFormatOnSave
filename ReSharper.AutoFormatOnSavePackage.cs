@@ -140,10 +140,11 @@ namespace ReSharper.AutoFormatOnSave
                 return;
             }
 
+            Document previouslyShownDocument = null;
             try
             {
                 this.docsInReformattingList.Add(document);
-
+                previouslyShownDocument = this.dte.ActiveDocument;
                 document.Activate();
                 this.dte.ExecuteCommand(ReSharperSilentCleanupCodeCommandName);
                 if (!document.Saved)
@@ -154,6 +155,10 @@ namespace ReSharper.AutoFormatOnSave
             finally
             {
                 this.docsInReformattingList.Remove(document);
+                if (previouslyShownDocument != null)
+                {
+                    previouslyShownDocument.Activate();
+                }
             }
         }
 
