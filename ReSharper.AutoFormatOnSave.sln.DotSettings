@@ -1,15 +1,21 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=477C38FFB40F2C4BAA073309F89662E7/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=477C38FFB40F2C4BAA073309F89662E7/AbsolutePath/@EntryValue">C:\Users\Pedro\Documents\Visual Studio 2010\Projects\ReSharper.AutoFormatOnSave\GeneralCode.DotSettings</s:String>
-	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=477C38FFB40F2C4BAA073309F89662E7/RelativePath/@EntryValue">..\ReSharper.AutoFormatOnSave\GeneralCode.DotSettings</s:String>
-	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=4BD5B43703D20A41825F324128A6856F/AbsolutePath/@EntryValue">C:\Users\Pedro\Documents\Visual Studio 2010\Projects\ReSharper.AutoFormatOnSave\CodeStyle.DotSettings</s:String>
-	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=4BD5B43703D20A41825F324128A6856F/RelativePath/@EntryValue">..\ReSharper.AutoFormatOnSave\CodeStyle.DotSettings</s:String>
-	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=4BD5B43703D20A41825F324128A6856F/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=AD6AAA88F68D234CBCBF077021747280/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=AD6AAA88F68D234CBCBF077021747280/AbsolutePath/@EntryValue">C:\Users\Pedro\Documents\Visual Studio 2010\Projects\ReSharper.AutoFormatOnSave\CodeStyle.DotSettings</s:String>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=AD6AAA88F68D234CBCBF077021747280/RelativePath/@EntryValue">..\CodeStyle.DotSettings</s:String>
+	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=AF87BC8D8714C8408E7E6055372093AC/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=AF87BC8D8714C8408E7E6055372093AC/AbsolutePath/@EntryValue">C:\Users\Pedro\Documents\Visual Studio 2010\Projects\ReSharper.AutoFormatOnSave\GeneralCode.DotSettings</s:String>
+	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=AF87BC8D8714C8408E7E6055372093AC/RelativePath/@EntryValue">..\GeneralCode.DotSettings</s:String>
+	
+	
+	
+	
+	
+	
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CVisual_0020Studio_00202010_005CProjects_005CReSharper_002EAutoFormatOnSave_005CCodeStyle_002EDotSettings/@KeyIndexDefined">True</s:Boolean>
 	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CVisual_0020Studio_00202010_005CProjects_005CReSharper_002EAutoFormatOnSave_005CCodeStyle_002EDotSettings/RelativePriority/@EntryValue">1</s:Double>
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CVisual_0020Studio_00202010_005CProjects_005CReSharper_002EAutoFormatOnSave_005CGeneralCode_002EDotSettings/@KeyIndexDefined">True</s:Boolean>
 	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CVisual_0020Studio_00202010_005CProjects_005CReSharper_002EAutoFormatOnSave_005CGeneralCode_002EDotSettings/RelativePriority/@EntryValue">2</s:Double>
-	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CVisual_0020Studio_00202010_005CProjects_005CReSharper_002EAutoFormatOnSave_005CReSharper_002EAutoFormatOnSave_005CCodeStyle_002EDotSettings/@KeyIndexDefined">True</s:Boolean>
-	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CVisual_0020Studio_00202010_005CProjects_005CReSharper_002EAutoFormatOnSave_005CReSharper_002EAutoFormatOnSave_005CCodeStyle_002EDotSettings/RelativePriority/@EntryValue">4</s:Double>
-	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CVisual_0020Studio_00202010_005CProjects_005CReSharper_002EAutoFormatOnSave_005CReSharper_002EAutoFormatOnSave_005CGeneralCode_002EDotSettings/@KeyIndexDefined">True</s:Boolean>
-	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CVisual_0020Studio_00202010_005CProjects_005CReSharper_002EAutoFormatOnSave_005CReSharper_002EAutoFormatOnSave_005CGeneralCode_002EDotSettings/RelativePriority/@EntryValue">3</s:Double></wpf:ResourceDictionary>
+	
+	
+	
+	</wpf:ResourceDictionary>
