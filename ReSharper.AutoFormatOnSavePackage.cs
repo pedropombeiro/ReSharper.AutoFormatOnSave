@@ -37,16 +37,12 @@ namespace ReSharper.AutoFormatOnSave
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
     public sealed class ReSharper_AutoFormatOnSavePackage : Package
     {
-        #region Constants
+        #region Constants and Fields
 
         /// <summary>
         /// The name for the ReSharper silent code cleanup command.
         /// </summary>
         private const string ReSharperSilentCleanupCodeCommandName = "ReSharper_SilentCleanupCode";
-
-        #endregion
-
-        #region Fields
 
         /// <summary>
         /// The list of documents which are currently being reformatted.
@@ -140,11 +136,11 @@ namespace ReSharper.AutoFormatOnSave
                 return;
             }
 
-            Document previouslyShownDocument = null;
+            Window previouslyShownWindow = null;
             try
             {
                 this.docsInReformattingList.Add(document);
-                previouslyShownDocument = this.dte.ActiveDocument;
+                previouslyShownWindow = this.dte.ActiveWindow;
                 document.Activate();
                 this.dte.ExecuteCommand(ReSharperSilentCleanupCodeCommandName);
                 if (!document.Saved)
@@ -155,9 +151,9 @@ namespace ReSharper.AutoFormatOnSave
             finally
             {
                 this.docsInReformattingList.Remove(document);
-                if (previouslyShownDocument != null)
+                if (previouslyShownWindow != null)
                 {
-                    previouslyShownDocument.Activate();
+                    previouslyShownWindow.Activate();
                 }
             }
         }
