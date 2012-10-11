@@ -12,6 +12,7 @@ namespace ReSharper.AutoFormatOnSave
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Windows.Forms;
 
     using EnvDTE;
 
@@ -62,7 +63,12 @@ namespace ReSharper.AutoFormatOnSave
         /// <summary>
         /// The dictionary of documents which are currently being reformatted mapped to the timestamp when they were last reformatted.
         /// </summary>
-        private readonly Dictionary<Document, DateTime> docsInReformattingDictionary = new Dictionary<Document, DateTime>();
+        private readonly Dictionary<Document, DateTime> recentlySavedDocsDictionary = new Dictionary<Document, DateTime>();
+
+        /// <summary>
+        /// A timer which runs background checks (mainly to check whether all saves have completed).
+        /// </summary>
+        private readonly Timer timer = new System.Windows.Forms.Timer { Interval = 500 };
 
         /// <summary>
         /// The document events object.
@@ -73,6 +79,16 @@ namespace ReSharper.AutoFormatOnSave
         /// The DTE2 global service.
         /// </summary>
         private DTE2 dte;
+
+        /// <summary>
+        /// <c>true</c> if currently reformatting recently saved files.
+        /// </summary>
+        private bool isReformatting;
+
+        /// <summary>
+        /// The time of the last reformat.
+        /// </summary>
+        private DateTime lastReformat;
 
         #endregion
 
@@ -89,6 +105,8 @@ namespace ReSharper.AutoFormatOnSave
         public ReSharper_AutoFormatOnSavePackage()
         {
             Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering constructor for: {0}", this));
+
+            this.timer.Tick += this.TimerOnTick;
         }
 
         #endregion
@@ -100,6 +118,9 @@ namespace ReSharper.AutoFormatOnSave
             if (disposing)
             {
                 this.DisconnectFromDocumentEvents();
+
+                this.timer.Tick -= this.TimerOnTick;
+                this.timer.Dispose();
             }
 
             base.Dispose(disposing);
@@ -123,11 +144,13 @@ namespace ReSharper.AutoFormatOnSave
         /// </summary>
         private void DisconnectFromDocumentEvents()
         {
-            if (this.documentEvents != null)
+            if (this.documentEvents == null)
             {
-                this.documentEvents.DocumentSaved -= this.OnDocumentSaved;
-                this.documentEvents = null;
+                return;
             }
+
+            this.documentEvents.DocumentSaved -= this.OnDocumentSaved;
+            this.documentEvents = null;
         }
 
         /// <summary>
@@ -146,6 +169,7 @@ namespace ReSharper.AutoFormatOnSave
 
             this.documentEvents = events2.DocumentEvents[null];
             this.documentEvents.DocumentSaved += this.OnDocumentSaved;
+            this.timer.Start();
         }
 
         /// <summary>
@@ -156,55 +180,87 @@ namespace ReSharper.AutoFormatOnSave
         /// </param>
         private void OnDocumentSaved(Document document)
         {
-            this.RemoveOldDocumentEntries();
-
             var extension = Path.GetExtension(document.FullName);
-            if (this.docsInReformattingDictionary.ContainsKey(document) || !AllowedFileExtensions.Contains(extension))
+            if (AllowedFileExtensions.Contains(extension))
             {
-                return;
-            }
-
-            var previouslyActiveWindow = this.dte.ActiveWindow;
-            try
-            {
-                // Active the document which was just saved
-                document.Activate();
-
-                // so that we can run the ReSharper command on it.
-                this.dte.ExecuteCommand(ReSharperSilentCleanupCodeCommandName);
-
                 // Mark it as saved in our internal data structure
-                this.docsInReformattingDictionary.Add(document, DateTime.Now);
-
-                // and save it again, if changed.
-                if (!document.Saved)
-                {
-                    document.Save();
-                }
-            }
-            finally
-            {
-                if (previouslyActiveWindow != null)
-                {
-                    // Reactivate the original window.
-                    previouslyActiveWindow.Activate();
-                }
+                this.recentlySavedDocsDictionary[document] = DateTime.Now;
             }
         }
 
         /// <summary>
-        /// Goes through the <see cref="docsInReformattingDictionary"/> dictionary and removes entries which are more than 5 seconds old.
+        /// Called periodically.
         /// </summary>
-        private void RemoveOldDocumentEntries()
+        /// <param name="sender">
+        /// The timer.
+        /// </param>
+        /// <param name="eventArgs">
+        /// Nothing (<see cref="EventArgs.Empty"/>).
+        /// </param>
+        private void TimerOnTick(object sender, EventArgs eventArgs)
         {
-            var safePeriod = TimeSpan.FromSeconds(5);
-
-            foreach (var kvp in from kvp in this.docsInReformattingDictionary
-                                let lastReformatTimestamp = kvp.Value
-                                where DateTime.Now >= lastReformatTimestamp + safePeriod
-                                select kvp)
+            // Sanity check
+            if (this.isReformatting || !this.recentlySavedDocsDictionary.Any())
             {
-                this.docsInReformattingDictionary.Remove(kvp.Key);
+                return;
+            }
+
+            if ((DateTime.Now - this.lastReformat).TotalSeconds < 5)
+            {
+                // Ignore any documents that have been saved if a reformat has happened within the last 5 seconds.
+                this.recentlySavedDocsDictionary.Clear();
+                return;
+            }
+
+            var anyDocumentSavedSinceLastCheck = this.recentlySavedDocsDictionary.Any(kvp => (DateTime.Now - kvp.Value).TotalMilliseconds < this.timer.Interval);
+            if (anyDocumentSavedSinceLastCheck)
+            {
+                return;
+            }
+
+            this.isReformatting = true;
+            this.timer.Stop();
+
+            var originallyActiveWindow = this.dte.ActiveWindow;
+
+            try
+            {
+                var recentlySavedDocs =
+                    this.recentlySavedDocsDictionary
+                        .OrderBy(kvp => kvp.Value)
+                        .Select(kvp => kvp.Key)
+                        .ToArray();
+
+                foreach (var document in recentlySavedDocs)
+                {
+                    // Active the document which was just saved
+                    document.Activate();
+
+                    // so that we can run the ReSharper command on it.
+                    this.dte.ExecuteCommand(ReSharperSilentCleanupCodeCommandName);
+                }
+
+                foreach (var document in recentlySavedDocs)
+                {
+                    // and save it again, if changed.
+                    if (!document.Saved)
+                    {
+                        document.Save();
+                    }
+                }
+
+                if (originallyActiveWindow != null)
+                {
+                    // Reactivate the original window.
+                    originallyActiveWindow.Activate();
+                }
+            }
+            finally
+            {
+                this.recentlySavedDocsDictionary.Clear();
+                this.lastReformat = DateTime.Now;
+                this.timer.Start();
+                this.isReformatting = false;
             }
         }
 
