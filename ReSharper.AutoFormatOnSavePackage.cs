@@ -68,10 +68,20 @@ namespace ReSharper.AutoFormatOnSave
         /// <summary>
         /// A timer which runs background checks (mainly to check whether all saves have completed).
         /// </summary>
-        private readonly Timer timer = new System.Windows.Forms.Timer { Interval = 500 };
+        private readonly Timer timer = new System.Windows.Forms.Timer { Interval = 1000 };
 
         /// <summary>
-        /// The document events object.
+        /// The Visual Studio build events object.
+        /// </summary>
+        private BuildEvents buildEvents;
+
+        /// <summary>
+        /// Positive value when the build engine is running.
+        /// </summary>
+        private int buildingSolution;
+
+        /// <summary>
+        /// The Visual Studio document events object.
         /// </summary>
         private DocumentEvents documentEvents;
 
@@ -89,6 +99,13 @@ namespace ReSharper.AutoFormatOnSave
         /// The time of the last reformat.
         /// </summary>
         private DateTime lastReformat;
+
+        private SolutionEvents solutionEvents;
+
+        /// <summary>
+        /// <c>true</c> if a solution is active.
+        /// </summary>
+        private bool solutionIsActive;
 
         #endregion
 
@@ -117,7 +134,7 @@ namespace ReSharper.AutoFormatOnSave
         {
             if (disposing)
             {
-                this.DisconnectFromDocumentEvents();
+                this.DisconnectFromVSEvents();
 
                 this.timer.Tick -= this.TimerOnTick;
                 this.timer.Dispose();
@@ -142,15 +159,27 @@ namespace ReSharper.AutoFormatOnSave
         /// <summary>
         /// Disconnect from <see cref="DocumentEvents"/>.
         /// </summary>
-        private void DisconnectFromDocumentEvents()
+        private void DisconnectFromVSEvents()
         {
-            if (this.documentEvents == null)
+            if (this.documentEvents != null)
             {
-                return;
+                this.documentEvents.DocumentSaved -= this.OnDocumentSaved;
+                this.documentEvents = null;
             }
 
-            this.documentEvents.DocumentSaved -= this.OnDocumentSaved;
-            this.documentEvents = null;
+            if (this.buildEvents != null)
+            {
+                this.buildEvents.OnBuildBegin -= this.OnBuildBegin;
+                this.buildEvents.OnBuildDone -= this.OnBuildDone;
+                this.buildEvents = null;
+            }
+
+            if (this.solutionEvents != null)
+            {
+                this.solutionEvents.Opened -= this.OnOpenedSolution;
+                this.solutionEvents.BeforeClosing -= this.OnBeforeClosingSolution;
+                this.solutionEvents = null;
+            }
         }
 
         /// <summary>
@@ -165,11 +194,70 @@ namespace ReSharper.AutoFormatOnSave
 
             var events2 = (EnvDTE80.Events2)this.dte.Events;
 
-            this.DisconnectFromDocumentEvents();
+            this.DisconnectFromVSEvents();
 
             this.documentEvents = events2.DocumentEvents[null];
             this.documentEvents.DocumentSaved += this.OnDocumentSaved;
+
+            this.buildEvents = events2.BuildEvents;
+            this.buildEvents.OnBuildBegin += this.OnBuildBegin;
+            this.buildEvents.OnBuildDone += this.OnBuildDone;
+
+            this.solutionEvents = events2.SolutionEvents;
+            this.solutionEvents.Opened += this.OnOpenedSolution;
+            this.solutionEvents.BeforeClosing += this.OnBeforeClosingSolution;
+
             this.timer.Start();
+        }
+
+        /// <summary>
+        /// The on before closing solution.
+        /// </summary>
+        private void OnBeforeClosingSolution()
+        {
+            this.solutionIsActive = false;
+        }
+
+        /// <summary>
+        /// Called when a build has begun.
+        /// </summary>
+        /// <param name="scope">
+        /// The build scope.
+        /// </param>
+        /// <param name="action">
+        /// The build action.
+        /// </param>
+        private void OnBuildBegin(vsBuildScope scope, vsBuildAction action)
+        {
+            switch (action)
+            {
+                case vsBuildAction.vsBuildActionBuild:
+                case vsBuildAction.vsBuildActionRebuildAll:
+                case vsBuildAction.vsBuildActionDeploy:
+                    ++this.buildingSolution;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Called when a build is done.
+        /// </summary>
+        /// <param name="scope">
+        /// The build scope.
+        /// </param>
+        /// <param name="action">
+        /// The build action.
+        /// </param>
+        private void OnBuildDone(vsBuildScope scope, vsBuildAction action)
+        {
+            switch (action)
+            {
+                case vsBuildAction.vsBuildActionBuild:
+                case vsBuildAction.vsBuildActionRebuildAll:
+                case vsBuildAction.vsBuildActionDeploy:
+                    --this.buildingSolution;
+                    break;
+            }
         }
 
         /// <summary>
@@ -189,6 +277,14 @@ namespace ReSharper.AutoFormatOnSave
         }
 
         /// <summary>
+        /// Called when a solution is opened.
+        /// </summary>
+        private void OnOpenedSolution()
+        {
+            this.solutionIsActive = true;
+        }
+
+        /// <summary>
         /// Called periodically.
         /// </summary>
         /// <param name="sender">
@@ -199,68 +295,91 @@ namespace ReSharper.AutoFormatOnSave
         /// </param>
         private void TimerOnTick(object sender, EventArgs eventArgs)
         {
-            // Sanity check
-            if (this.isReformatting || !this.recentlySavedDocsDictionary.Any())
-            {
-                return;
-            }
-
-            if ((DateTime.Now - this.lastReformat).TotalSeconds < 5)
-            {
-                // Ignore any documents that have been saved if a reformat has happened within the last 5 seconds.
-                this.recentlySavedDocsDictionary.Clear();
-                return;
-            }
-
-            var anyDocumentSavedSinceLastCheck = this.recentlySavedDocsDictionary.Any(kvp => (DateTime.Now - kvp.Value).TotalMilliseconds < this.timer.Interval);
-            if (anyDocumentSavedSinceLastCheck)
-            {
-                return;
-            }
-
-            this.isReformatting = true;
-            this.timer.Stop();
-
-            var originallyActiveWindow = this.dte.ActiveWindow;
-
             try
             {
-                var recentlySavedDocs =
-                    this.recentlySavedDocsDictionary
-                        .OrderBy(kvp => kvp.Value)
-                        .Select(kvp => kvp.Key)
-                        .ToArray();
-
-                foreach (var document in recentlySavedDocs)
+                if (this.buildingSolution > 0)
                 {
-                    // Active the document which was just saved
-                    document.Activate();
-
-                    // so that we can run the ReSharper command on it.
-                    this.dte.ExecuteCommand(ReSharperSilentCleanupCodeCommandName);
+                    this.recentlySavedDocsDictionary.Clear();
+                    return;
                 }
 
-                foreach (var document in recentlySavedDocs)
+                // Sanity check
+                if (this.dte.Application.Mode == vsIDEMode.vsIDEModeDebug ||
+                    this.isReformatting ||
+                    !this.solutionIsActive ||
+                    !this.recentlySavedDocsDictionary.Any())
                 {
-                    // and save it again, if changed.
-                    if (!document.Saved)
+                    return;
+                }
+
+                // Remove all unsaved documents from the dictionary
+                foreach (var document in this.recentlySavedDocsDictionary.Where(x => !x.Key.Saved).Select(x => x.Key).ToArray())
+                {
+                    this.recentlySavedDocsDictionary.Remove(document);
+                }
+
+                var now = DateTime.Now;
+                if ((now - this.lastReformat).TotalSeconds < 5)
+                {
+                    // Ignore any documents that have been saved if a reformat has happened within the last 5 seconds.
+                    this.recentlySavedDocsDictionary.Clear();
+                    return;
+                }
+
+                var anyDocumentSavedSinceLastCheck = this.recentlySavedDocsDictionary.Any(kvp => (now - kvp.Value).TotalMilliseconds < this.timer.Interval);
+                if (!this.recentlySavedDocsDictionary.Any() || anyDocumentSavedSinceLastCheck)
+                {
+                    return;
+                }
+
+                this.isReformatting = true;
+                this.timer.Stop();
+                this.lastReformat = DateTime.Now;
+
+                var originallyActiveWindow = this.dte.ActiveWindow;
+
+                try
+                {
+                    var recentlySavedDocs =
+                        this.recentlySavedDocsDictionary
+                            .OrderBy(kvp => kvp.Value)
+                            .Select(kvp => kvp.Key)
+                            .Except(new[] { originallyActiveWindow.Document })
+                            .Concat(this.recentlySavedDocsDictionary.ContainsKey(originallyActiveWindow.Document)
+                                        ? new[] { originallyActiveWindow.Document }
+                                        : Enumerable.Empty<Document>())
+                            .ToArray();
+
+                    foreach (var document in recentlySavedDocs)
+                    {
+                        // Active the document which was just saved
+                        document.Activate();
+
+                        // so that we can run the ReSharper command on it.
+                        this.dte.ExecuteCommand(ReSharperSilentCleanupCodeCommandName);
+                    }
+
+                    foreach (var document in recentlySavedDocs.Where(document => !document.Saved))
                     {
                         document.Save();
                     }
-                }
 
-                if (originallyActiveWindow != null)
+                    if (originallyActiveWindow != null)
+                    {
+                        // Reactivate the original window.
+                        originallyActiveWindow.Activate();
+                    }
+                }
+                finally
                 {
-                    // Reactivate the original window.
-                    originallyActiveWindow.Activate();
+                    this.recentlySavedDocsDictionary.Clear();
+                    this.timer.Start();
+                    this.isReformatting = false;
                 }
             }
-            finally
+            catch (Exception e)
             {
-                this.recentlySavedDocsDictionary.Clear();
-                this.lastReformat = DateTime.Now;
-                this.timer.Start();
-                this.isReformatting = false;
+                System.Windows.Forms.MessageBox.Show(e.Message, "ReShaper.AutoFormatOnSave", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
