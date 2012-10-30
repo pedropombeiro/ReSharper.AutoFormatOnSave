@@ -4,7 +4,7 @@
   <Identifier Id="2c65fba8-3ecb-4004-8ee3-6d9e62cd987a">
     <Name>ReSharper.AutoFormatOnSave</Name>
     <Author>Pedro Pombeiro - Developer in The Flow</Author>
-    <Version>1.1.1</Version>
+    <Version>1.1.3</Version>
     <Description xml:space="preserve">Runs silent Reformat Code command upon file save.</Description>
     <Locale>1033</Locale>
     <MoreInfoUrl>https://github.com/PombeirP/ReSharper.AutoFormatOnSave/wiki</MoreInfoUrl>
