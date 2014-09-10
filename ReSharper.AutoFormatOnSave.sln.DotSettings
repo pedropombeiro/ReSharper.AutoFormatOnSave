@@ -5,6 +5,10 @@
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=AF87BC8D8714C8408E7E6055372093AC/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=AF87BC8D8714C8408E7E6055372093AC/AbsolutePath/@EntryValue">C:\Users\Pedro\Documents\Visual Studio 2010\Projects\ReSharper.AutoFormatOnSave\GeneralCode.DotSettings</s:String>
 	<s:String x:Key="/Default/Environment/InjectedLayers/FileInjectedLayer/=AF87BC8D8714C8408E7E6055372093AC/RelativePath/@EntryValue">..\GeneralCode.DotSettings</s:String>
+	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=FileAD6AAA88F68D234CBCBF077021747280/@KeyIndexDefined">True</s:Boolean>
+	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=FileAD6AAA88F68D234CBCBF077021747280/RelativePriority/@EntryValue">5</s:Double>
+	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=FileAF87BC8D8714C8408E7E6055372093AC/@KeyIndexDefined">True</s:Boolean>
+	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=FileAF87BC8D8714C8408E7E6055372093AC/RelativePriority/@EntryValue">6</s:Double>
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CGitHub_005CReSharper_002EAutoFormatOnSave_005CCodeStyle_002EDotSettings/@KeyIndexDefined">True</s:Boolean>
 	<s:Double x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CGitHub_005CReSharper_002EAutoFormatOnSave_005CCodeStyle_002EDotSettings/RelativePriority/@EntryValue">3</s:Double>
 	<s:Boolean x:Key="/Default/Environment/InjectedLayers/InjectedLayerCustomization/=File_003A_003AC_003A_005CUsers_005CPedro_005CDocuments_005CGitHub_005CReSharper_002EAutoFormatOnSave_005CGeneralCode_002EDotSettings/@KeyIndexDefined">True</s:Boolean>

@@ -3,6 +3,7 @@
 //   2012 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace ReSharper.AutoFormatOnSave
 {
     using System;
@@ -54,7 +55,7 @@ namespace ReSharper.AutoFormatOnSave
         /// <summary>
         /// The allowed file extensions for code cleanup.
         /// </summary>
-        private static readonly string[] AllowedFileExtensions = new[] { ".cs", ".xaml", ".vb" };
+        private static readonly string[] AllowedFileExtensions = new[] { ".cs", ".xaml", ".vb", ".js", ".ts", ".css", ".html", ".xml" };
 
         #endregion
 
@@ -332,19 +333,19 @@ namespace ReSharper.AutoFormatOnSave
             try
             {
                 var originallyActiveDocument = originallyActiveWindow != null
-                                                   ? originallyActiveWindow.Document
-                                                   : null;
+                    ? originallyActiveWindow.Document
+                    : null;
                 var activeDocumentCollection = originallyActiveDocument != null
-                                                   ? Enumerable.Repeat(originallyActiveDocument, 1)
-                                                   : Enumerable.Empty<Document>();
+                    ? Enumerable.Repeat(originallyActiveDocument, 1)
+                    : Enumerable.Empty<Document>();
 
 // ReSharper disable PossibleMultipleEnumeration
                 var recentlySavedDocs =
                     documentsToReformat // .Where(x => x.ActiveWindow != null)
                         .Except(activeDocumentCollection)
                         .Concat(originallyActiveDocument != null && this.documentsToReformatDictionary.ContainsKey(originallyActiveDocument)
-                                    ? activeDocumentCollection
-                                    : Enumerable.Empty<Document>())
+                            ? activeDocumentCollection
+                            : Enumerable.Empty<Document>())
 
 
 
@@ -448,7 +449,7 @@ namespace ReSharper.AutoFormatOnSave
                 this.ReformatDocuments(
                     this.documentsToReformatDictionary
                         .OrderBy(kvp => kvp.Value)
-                        .Select(kvp => kvp.Key), 
+                        .Select(kvp => kvp.Key),
                     true);
             }
             catch (Exception e)
