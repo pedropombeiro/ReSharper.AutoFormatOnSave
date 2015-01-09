@@ -397,6 +397,14 @@ namespace ReSharper.AutoFormatOnSave
             }
         }
 
+        private static bool IsVisualStudioForegroundWindow()
+        {
+            uint foregroundProcessId;
+            NativeMethods.GetWindowThreadProcessId(NativeMethods.GetForegroundWindow(), out foregroundProcessId);
+            var visualStudioProcessId = System.Diagnostics.Process.GetCurrentProcess().Id;
+            return visualStudioProcessId == foregroundProcessId;
+        }
+
         /// <summary>
         /// Called periodically.
         /// </summary>
@@ -421,7 +429,8 @@ namespace ReSharper.AutoFormatOnSave
                 if (this.dte.Application.Mode == vsIDEMode.vsIDEModeDebug ||
                     this.isReformatting ||
                     !this.solutionIsActive ||
-                    !this.documentsToReformatDictionary.Any())
+                    !this.documentsToReformatDictionary.Any() ||
+                    !IsVisualStudioForegroundWindow())
                 {
                     return;
                 }
