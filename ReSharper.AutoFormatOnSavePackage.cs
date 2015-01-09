@@ -17,8 +17,6 @@ namespace ReSharper.AutoFormatOnSave
 
     using EnvDTE;
 
-    using EnvDTE80;
-
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
 
@@ -38,7 +36,7 @@ namespace ReSharper.AutoFormatOnSave
 //// in the Help/About dialog of Visual Studio.
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [Guid(GuidList.guidReSharper_AutoFormatOnSavePkgString)]
-    [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
+    [ProvideAutoLoad(UIContextGuids.SolutionExists)]
     public sealed class ReSharper_AutoFormatOnSavePackage : Package
     {
         #region Constants
@@ -87,9 +85,9 @@ namespace ReSharper.AutoFormatOnSave
         private DocumentEvents documentEvents;
 
         /// <summary>
-        /// The DTE2 global service.
+        /// The DTE global service.
         /// </summary>
-        private DTE2 dte;
+        private DTE dte;
 
         /// <summary>
         /// <c>true</c> if currently reformatting recently saved files.
@@ -156,7 +154,7 @@ namespace ReSharper.AutoFormatOnSave
             Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this));
             base.Initialize();
 
-            this.dte = (DTE2)GetGlobalService(typeof(DTE));
+            this.dte = (DTE)GetGlobalService(typeof(DTE));
             this.InitializeAddIn();
         }
 
@@ -197,7 +195,7 @@ namespace ReSharper.AutoFormatOnSave
                 return;
             }
 
-            var events2 = (EnvDTE80.Events2)this.dte.Events;
+            var events2 = this.dte.Events;
 
             this.DisconnectFromVsEvents();
 
