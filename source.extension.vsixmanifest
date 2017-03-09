@@ -1,44 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<Vsix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
-  <Identifier Id="2c65fba8-3ecb-4004-8ee3-6d9e62cd987a">
-    <Name>ReSharper.AutoFormatOnSave</Name>
-    <Author>Pedro Pombeiro - Developer in The Flow</Author>
-    <Version>1.2.4</Version>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="2c65fba8-3ecb-4004-8ee3-6d9e62cd987a" Version="1.2.5.0" Language="en-US" Publisher="Developer In The Flow" />
+    <DisplayName>ReSharper.AutoFormatOnSave</DisplayName>
     <Description xml:space="preserve">Runs silent Reformat Code command upon file save.</Description>
-    <Locale>1033</Locale>
-    <MoreInfoUrl>https://github.com/PombeirP/ReSharper.AutoFormatOnSave/wiki</MoreInfoUrl>
-    <InstalledByMsi>false</InstalledByMsi>
-    <SupportedProducts>
-      <VisualStudio Version="10.0">
-        <Edition>Ultimate</Edition>
-        <Edition>Premium</Edition>
-        <Edition>Pro</Edition>
-      </VisualStudio>
-      <VisualStudio Version="11.0">
-        <Edition>Ultimate</Edition>
-        <Edition>Premium</Edition>
-        <Edition>Pro</Edition>
-      </VisualStudio>
-      <VisualStudio Version="12.0">
-        <Edition>Ultimate</Edition>
-        <Edition>Premium</Edition>
-        <Edition>Pro</Edition>
-      </VisualStudio>
-      <VisualStudio Version="14.0">
-        <Edition>Enterprise</Edition>
-        <Edition>Pro</Edition>
-        <Edition>Community</Edition>
-      </VisualStudio>
-    </SupportedProducts>
-    <SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="4.6" />
-  </Identifier>
-  <References>
-    <Reference Id="Microsoft.VisualStudio.MPF" MinVersion="10.0">
-      <Name>Visual Studio MPF</Name>
-    </Reference>
-  </References>
-  <Content>
-    <VsPackage>|%CurrentProject%;PkgdefProjectOutputGroup|</VsPackage>
-  </Content>
-</Vsix>
+    <MoreInfo>https://github.com/PombeirP/ReSharper.AutoFormatOnSave/wiki</MoreInfo>
+    <Tags>ReSharper,format</Tags>
+  </Metadata>
+  <Installation InstalledByMsi="false">
+    <InstallationTarget Version="[11.0,12.0]" Id="Microsoft.VisualStudio.Premium" />
+    <InstallationTarget Version="[11.0,]" Id="Microsoft.VisualStudio.Pro" />
+    <InstallationTarget Version="[11.0,]" Id="Microsoft.VisualStudio.Enterprise" />
+    <InstallationTarget Version="[11.0,12.0]" Id="Microsoft.VisualStudio.Ultimate" />
+    <InstallationTarget Version="[11.0,]" Id="Microsoft.VisualStudio.Community" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.0,4.6]" />
+    <Dependency Id="Microsoft.VisualStudio.MPF.11.0" DisplayName="Visual Studio MPF 11.0" d:Source="Installed" Version="[10.0,11.0]" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+  </Assets>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0.26004.1,16.0)" DisplayName="Visual Studio core editor" />
+  </Prerequisites>
+</PackageManifest>
