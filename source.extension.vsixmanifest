@@ -2,7 +2,7 @@
 
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="2c65fba8-3ecb-4004-8ee3-6d9e62cd987a" Version="1.2.5.0" Language="en-US" Publisher="Developer In The Flow" />
+    <Identity Id="2c65fba8-3ecb-4004-8ee3-6d9e62cd987a" Version="1.2.6.0" Language="en-US" Publisher="Developer In The Flow" />
     <DisplayName>ReSharper.AutoFormatOnSave</DisplayName>
     <Description xml:space="preserve">Runs silent Reformat Code command upon file save.</Description>
     <MoreInfo>https://github.com/PombeirP/ReSharper.AutoFormatOnSave/wiki</MoreInfo>
@@ -16,14 +16,13 @@
     <InstallationTarget Version="[11.0,]" Id="Microsoft.VisualStudio.Community" />
   </Installation>
   <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.0,4.6]" />
-    <Dependency Id="Microsoft.VisualStudio.MPF.11.0" DisplayName="Visual Studio MPF 11.0" d:Source="Installed" Version="[10.0,11.0]" />
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.0,)" />
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
   </Assets>
   <Prerequisites>
-    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0.26004.1,16.0)" DisplayName="Visual Studio core editor" />
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0.26004.1,)" DisplayName="Visual Studio core editor" />
   </Prerequisites>
 </PackageManifest>

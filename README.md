@@ -12,4 +12,4 @@ The profile to use is defined in the box signaled below (ReSharper 6.1 shown her
 
 ![Choosing a default code format profile in ReSharper](http://blog.pedropombeiro.com/wp-content/uploads/2012/10/image_thumb-25255B10-25255D.png)
 
-The addin should be compatible with Visual Studio 2010, 2012 and 2013 as well as any version of ReSharper.
+The addin should be compatible with Visual Studio 2010 or later as well as any version of ReSharper.

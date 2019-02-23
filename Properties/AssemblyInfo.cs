@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Developer In The Flow")]
 [assembly: AssemblyProduct("ReSharper.AutoFormatOnSave")]
-[assembly: AssemblyCopyright("Copyright © Pedro Pombeiro 2012-2017")]
+[assembly: AssemblyCopyright("Copyright © Pedro Pombeiro 2012-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
@@ -35,5 +35,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("1.2.5.0")]
-[assembly: AssemblyFileVersion("1.2.5.0")]
+[assembly: AssemblyVersion("1.2.6.0")]
+[assembly: AssemblyFileVersion("1.2.6.0")]
